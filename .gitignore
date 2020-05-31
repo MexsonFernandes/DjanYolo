@@ -1,2 +1,5 @@
 /.vscode
 /db.sqlite
+
+/media/darknet/data/
+/media/darknet/temp/

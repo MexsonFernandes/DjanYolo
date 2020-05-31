@@ -12,6 +12,8 @@
 
         <script src="{% static 'js/Annotate.js' %}"></script>
 
+        <script src="{% static 'js/jszip.min.js' %}"></script>
+
     </head>
 
     <body>
@@ -40,7 +42,7 @@
                 {% csrf_token %}
                 <div class="file">
                 <label class="file-label">
-                    <input class="file-input" type="file" id="images" name="images[]" accept="image/jpeg, image/png" multiple />
+                    <input class="file-input" type="file" id="images" name="images" accept="image/jpeg, image/png" multiple />
                     <span class="file-cta">
                     <span class="file-icon">
                         <i class="fas fa-upload"></i>
@@ -76,10 +78,10 @@
                 <div id="bboxInformation"></div>
                 <hr />
 
-                <input type="file" id="annotate-files" name="annotate-files" hidden="hidden"/>
+                <input type="text" id="annotate-files" name="annotate-files" hidden="hidden"/>
 
                 <div id="voc">
-                    <input type="button" class="button is-warning" name="saveVocBboxes" id="saveVocBboxes" value="Upload & Save" />
+                    <input type="button" class="button is-warning" name="saveBboxes" id="saveBboxes" value="Upload & Save" />
                 </div>
                 <hr />
             </form>

@@ -94,8 +94,8 @@
             listenImageSelect()
             listenClassLoad()
             listenClassSelect()
-            listenBboxVocSave()
             listenKeyboard()
+            listenBboxSave()
             listenImageSearch()
             listenImageCrop()
         }
@@ -955,74 +955,43 @@
         }
     }
 
-    const listenBboxVocSave = () => {
-        document.getElementById("saveVocBboxes").addEventListener("click", () => {
-            const folderPath = 'images/'
+    const listenBboxSave = () => {
+        document.getElementById("saveBboxes").addEventListener("click", () => {
+            var data = ""
 
-            var annotate_files = document.getElementById('annotate-files');
+            console.log(bboxes)
+            console.log(images)
 
             for (let imageName in bboxes) {
                 const image = images[imageName]
 
                 const name = imageName.split(".")
 
-                name[name.length - 1] = "xml"
+                name[name.length - 1] = "txt"
 
-                const result = [
-                    "<?xml version=\"1.0\"?>",
-                    "<annotation>",
-                    `<folder>${folderPath}</folder>`,
-                    `<filename>${imageName}</filename>`,
-                    "<path/>",
-                    "<source>",
-                    "<database>Unknown</database>",
-                    "</source>",
-                    "<size>",
-                    `<width>${image.width}</width>`,
-                    `<height>${image.height}</height>`,
-                    "<depth>3</depth>",
-                    "</size>",
-                    "<segmented>0</segmented>"
-                ]
+                const result = []
 
                 for (let className in bboxes[imageName]) {
                     for (let i = 0; i < bboxes[imageName][className].length; i++) {
                         const bbox = bboxes[imageName][className][i]
 
-                        result.push("<object>")
-                        result.push(`<name>${className}</name>`)
-                        result.push("<pose>Unspecified</pose>")
-                        result.push("<truncated>0</truncated>")
-                        result.push("<occluded>0</occluded>")
-                        result.push("<difficult>0</difficult>")
+                        // Prepare data for yolo format
+                        const x = (bbox.x + bbox.width / 2) / image.width
+                        const y = (bbox.y + bbox.height / 2) / image.height
+                        const width = bbox.width / image.width
+                        const height = bbox.height / image.height
 
-                        result.push("<bndbox>")
-                        result.push(`<xmin>${bbox.x}</xmin>`)
-                        result.push(`<ymin>${bbox.y}</ymin>`)
-                        result.push(`<xmax>${bbox.x + bbox.width}</xmax>`)
-                        result.push(`<ymax>${bbox.y + bbox.height}</ymax>`)
-                        result.push("</bndbox>")
-
-                        result.push("</object>")
+                        result.push(`${classes[className]} ${x} ${y} ${width} ${height}`)
                     }
                 }
-
-                result.push("</annotation>")
-
-                if (result.length > 15) {
-                    annotate_files.append(new File([result.join("\n")], name.join(".")))
-                    // zip.file(name.join("."), result.join("\n"))
-                }
+                console.log(result.join("\n"))
+                console.log(name)
+                data += result.join("\n") + '-'
             }
 
-            // zip.generateAsync({type: "blob"})
-            //     .then((blob) => {
-
-            //         saveAs(blob, "bboxes_voc.zip")
-            //     })
-
-            // submit form
-            document.getElementById('annotate-form').submit();
+            var annotate_files = document.getElementById('annotate-files');
+            annotate_files.value = data;
+//            document.getElementById('annotate-form').submit();
         })
     }
 

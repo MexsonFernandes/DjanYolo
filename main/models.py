@@ -5,7 +5,7 @@ import os, base64
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
-path = "darknet/data/custom"
+path = "darknet/data"
 
 
 class AnnotationImageModel(models.Model):

@@ -8,9 +8,12 @@ from django.conf import settings
 import base64
 from django.core import serializers
 from autocorrect import spell
+import base64
+import zipfile
 
 
 file_supported = ['png', 'PNG', 'jpg', 'jpeg', 'JPG', 'JPEG']
+
 
 def upload(request):
     context = {}
@@ -20,6 +23,8 @@ def upload(request):
         print(request.FILES)
         context['msg_class'] = 'is-primary'
         print(request.POST.keys())
+        for i in request.POST.keys():
+            print(request.POST.get(i))
         for field in request.FILES.keys():
             print(field)
             for formfile in request.FILES.getlist(field):
@@ -29,21 +34,18 @@ def upload(request):
                     context['msg_class'] = 'is-danger'
                     context['message'] = 'File extension not supported!'
                     return render(request, 'upload.html', context=context)
+
                 img = AnnotationImageModel(image=formfile)
                 img.save()
                 # create annotation file
-                file_name = img.image.path + '.txt'
-                print(file_name)
-                f = open(file_name, "a+")
-                f.write(request.POST.get('annotate', ''))
-                print(request.POST.get('annotate', ''))
+                annotate = request.POST.get('annotate-files', '')
+                annotate_path = settings.MEDIA_ROOT + '/' + str(img.image).replace(str(img.image).split('.')[1], 'txt')
+                f = open(annotate_path, 'w+')
+                f.write(annotate.split('-')[request.FILES.getlist(field).index(formfile)])
 
-                # add annotation file in model
-                img.annotate = File(f)
-                os.remove(file_name)
-
-                # save data
+                img.annotate = annotate_path
                 img.save()
+
                 f.close()
 
         context['message'] = 'File uploaded!'
