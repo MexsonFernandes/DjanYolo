@@ -958,10 +958,6 @@
     const listenBboxSave = () => {
         document.getElementById("saveBboxes").addEventListener("click", () => {
             var data = ""
-
-            console.log(bboxes)
-            console.log(images)
-
             for (let imageName in bboxes) {
                 const image = images[imageName]
 
@@ -973,6 +969,7 @@
 
                 for (let className in bboxes[imageName]) {
                     for (let i = 0; i < bboxes[imageName][className].length; i++) {
+
                         const bbox = bboxes[imageName][className][i]
 
                         // Prepare data for yolo format
@@ -981,17 +978,15 @@
                         const width = bbox.width / image.width
                         const height = bbox.height / image.height
 
-                        result.push(`${classes[className]} ${x} ${y} ${width} ${height}`)
+                        result.push(`${className} ${x} ${y} ${width} ${height}`)
                     }
                 }
-                console.log(result.join("\n"))
-                console.log(name)
-                data += result.join("\n") + '-'
+                data += result.join("\n")
             }
-
             var annotate_files = document.getElementById('annotate-files');
-            annotate_files.value = data;
-//            document.getElementById('annotate-form').submit();
+            annotate_files.value = JSON.stringify(data);
+            console.log(data)
+            document.getElementById('annotate-form').submit();
         })
     }
 

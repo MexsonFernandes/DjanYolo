@@ -41,7 +41,6 @@ def image_as_base64(image_file, format='png'):
     return 'data:image/%s;base64,%s' % (format, encoded_string.decode('utf-8'))
 
 
-
 class YoloClassModel(models.Model):
     name = models.CharField(max_length=30, unique=True)
     total = models.IntegerField(default=0)

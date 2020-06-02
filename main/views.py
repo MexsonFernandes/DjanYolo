@@ -10,6 +10,7 @@ from django.core import serializers
 from autocorrect import spell
 import base64
 import zipfile
+import json
 
 
 file_supported = ['png', 'PNG', 'jpg', 'jpeg', 'JPG', 'JPEG']
@@ -19,6 +20,8 @@ def upload(request):
     context = {}
     table = YoloClassModel.objects.all().values('name')
     context['class_table'] = list(table)
+    annotate = request.POST.get('annotate-files', '')
+    print(annotate)
     if request.method == 'POST':
         print(request.FILES)
         context['msg_class'] = 'is-primary'
@@ -41,7 +44,7 @@ def upload(request):
                 annotate = request.POST.get('annotate-files', '')
                 annotate_path = settings.MEDIA_ROOT + '/' + str(img.image).replace(str(img.image).split('.')[1], 'txt')
                 f = open(annotate_path, 'w+')
-                f.write(annotate.split('-')[request.FILES.getlist(field).index(formfile)])
+                f.write(json.loads(annotate))
 
                 img.annotate = annotate_path
                 img.save()
